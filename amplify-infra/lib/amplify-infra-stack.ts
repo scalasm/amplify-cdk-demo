@@ -12,7 +12,7 @@ export class AmplifyInfraStack extends cdk.Stack {
         oauthToken: cdk.SecretValue.secretsManager("github-token")
       })
     });
-
+    
     amplifyApp.addBranch("main");
   }
 }
