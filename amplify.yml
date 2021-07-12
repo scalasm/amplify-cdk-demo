@@ -7,6 +7,8 @@ frontend:
         - npm ci
     build:
       commands:
+        - echo "REACT_APP_REGION=$REGION" >> .env
+        - echo "REACT_APP_ENDPOINT=$ENDPOINT" >> .env
         - npm run build
   artifacts:
     baseDirectory: "amplify-demo/build"
