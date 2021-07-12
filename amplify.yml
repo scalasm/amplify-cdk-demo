@@ -9,9 +9,9 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: build
+    baseDirectory: "amplify-demo/build"
     files:
       - "**/*"
   cache:
     paths:
-      - "node_modules/**/*"
+      - "amplify-demo/node_modules/**/*"
