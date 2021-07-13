@@ -14,9 +14,9 @@ frontend:
         - echo "REACT_APP_APPSYNC_API=$APPSYNC_API" >> .env 
         - npm run build
   artifacts:
-    baseDirectory: "amplify-demo/build"
+    baseDirectory: "frontend/build"
     files:
       - "**/*"
   cache:
     paths:
-      - "amplify-demo/node_modules/**/*"
+      - "frontend/node_modules/**/*"
