@@ -1,36 +1,47 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function App() {
-  const [showResult, setShowResult] = useState(false);
-  const [apiMessage, setApiMessage] = useState("");
+import Amplify from 'aws-amplify';
+import { AmplifyAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
 
-  const getApiMessage = async () => {
+import awsconfig from './aws-config';
 
-    console.log(process.env.REACT_APP_ENDPOINT);
-    const response = await fetch(`${process.env.REACT_APP_ENDPOINT}hello`, {
-      mode: 'cors'
-    });
-    
-    const responseData = await response.text();
-    console.log(responseData)
+Amplify.configure(awsconfig);
+console.log(awsconfig)
 
-    setShowResult(true);
-    setApiMessage(responseData);  
-  };
+class Header extends Component {
+  render() {
+    return (
+      <div>
+        <header className="App-header">
+          <h1 className="App-title">Notes App</h1>
+        </header> 
+        <AmplifySignOut />
+      </div>
+     
+    )
+  }
+}
 
+class App extends Component {
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>CALL AN API</h1>
-        <button onClick={getApiMessage}>Call Lambda</button>
-        <div>
-          {showResult && <code>{JSON.stringify(apiMessage, null, 2)}</code>}
-        </div>
-      </header>
-    </div>
-  );
+  constructor(props) {
+    super(props);
+    this.state = { notes:[] }
+  }
+
+  render() {
+    return (
+      <AmplifyAuthenticator>
+       <div className="row">
+        <div className="col m-3">
+          <Header/>
+        </div> 
+      </div> 
+      </AmplifyAuthenticator>
+    );
+  }
 }
 
 export default App;
