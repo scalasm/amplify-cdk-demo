@@ -23,9 +23,11 @@
   "dependencies": {
     "@aws-cdk/aws-amplify": "1.113.0",
     "@aws-cdk/aws-apigateway": "1.113.0",
+    "@aws-cdk/aws-appsync": "^1.113.0",
     "@aws-cdk/aws-cognito": "^1.113.0",
     "@aws-cdk/aws-lambda": "1.113.0",
     "@aws-cdk/core": "1.113.0",
+    "cdk-appsync-transformer": "^1.77.16",
     "source-map-support": "^0.5.16"
   }
 }
