@@ -8,7 +8,9 @@ frontend:
     build:
       commands:
         - echo "REACT_APP_REGION=$REGION" >> .env
-        - echo "REACT_APP_ENDPOINT=$ENDPOINT" >> .env
+        - echo "REACT_APP_IDENTITY_POOL_ID=$IDENTITY_POOL_ID" >> .env
+        - echo "REACT_APP_USER_POOL_CLIENT_ID=$USER_POOL_CLIENT_ID" >> .env
+        - echo "REACT_APP_USER_POOL_ID=$USER_POOL_ID" >> .env
         - npm run build
   artifacts:
     baseDirectory: "amplify-demo/build"
