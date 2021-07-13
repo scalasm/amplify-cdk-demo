@@ -1,8 +1,6 @@
 import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as apigw from "@aws-cdk/aws-apigateway";
 import * as amplify from "@aws-cdk/aws-amplify";
-import { LambdaIntegration } from "@aws-cdk/aws-apigateway";
+import * as cognito from "@aws-cdk/aws-cognito";
 
 import * as path from "path";
 
@@ -10,24 +8,25 @@ export class AmplifyInfraStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const myLambda = new lambda.Function(this, "Lambda", {
-      runtime: lambda.Runtime.NODEJS_14_X,
-      handler: "handler.handler",
-      code: lambda.Code.fromAsset(path.resolve(__dirname, "lambda"))
+    const userPool = new cognito.UserPool(this, " CognitoUserPool", {
+      userPoolName: "AmplifyDemoUserPool",
+      selfSignUpEnabled: true, // Allow users to sign up
+      autoVerify: { email: true }, // Verify email addresses by sending a verification code
+      signInAliases: {email: true } // Set email as alias
     });
 
-    const myApiGw = new apigw.RestApi(this, "hello-api", {
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowMethods: apigw.Cors.ALL_METHODS,
-        allowHeaders: ["*"]
-      }
+    const userPoolClient = new cognito.UserPoolClient(this, "CognitoUserPoolClient", {
+      userPool,
+      generateSecret: false // No need to generate a secret for webapps running in browser
     });
 
-    myApiGw.root
-      .resourceForPath("hello")
-      .addMethod("GET", new apigw.LambdaIntegration(myLambda));
-
+    const identityPool = new cognito.CfnIdentityPool(this, "CognitoIdentityPool", {
+      allowUnauthenticatedIdentities: true,
+      cognitoIdentityProviders: [ {
+        clientId: userPoolClient.userPoolClientId,
+        providerName: userPool.userPoolProviderName
+      }]
+    });
 
     const amplifyApp = new amplify.App(this, "amplify-demo-app", {
       sourceCodeProvider: new amplify.GitHubSourceCodeProvider({
@@ -36,8 +35,10 @@ export class AmplifyInfraStack extends cdk.Stack {
         oauthToken: cdk.SecretValue.secretsManager("github-token")
       }),
       environmentVariables: {
-        "ENDPOINT": myApiGw.url,
-        "REGION": this.region
+        "REGION": this.region,
+        "IDENTITY_POOL_ID": identityPool.ref,
+        "USER_POOL_CLIENT_ID": userPoolClient.userPoolClientId,
+        "USER_POOL_ID": userPool.userPoolId
       }
     });
     
